@@ -1,0 +1,176 @@
+<!doctype html><html class="theme-next use-motion"><head><meta charset="UTF-8"><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Cache-Control content="no-transform"><meta http-equiv=Cache-Control content="no-siteapp"><link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel=stylesheet type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel=stylesheet type=text/css><link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel=stylesheet type="text/css"><link href="/css/main.css?v=0.4.5.2" rel=stylesheet type="text/css"><meta name=keywords content="Swift,Playground"><link rel=alternate href=/atom.xml title=阳春面的博客 type="application/atom+xml"><link rel="shortcut icon" type=image/x-icon href="/images/favicon.ico?v=0.4.5.2"><meta name=description content="闭包定义：闭包是自包含的函数代码块，可以在代码中被传递和使用。闭包表达式语法&amp;#123; (parameters) -&amp;gt; returnType in    statements&amp;#125;Swift闭包使用{}包含，in语句前面定义好传入函数的参数个数，类型和返回值，in语句后面编写实际函数体内容。闭包使用例子let names = [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]var reverse"><meta property=og:type content=article><meta property=og:title content=使用Playground快速练习Swift语法--闭包和枚举><meta property=og:url content=https://aswifter.com/2015/07/20/learn-swift-with-playground-closure-enum/index.html><meta property=og:site_name content=阳春面的博客><meta property=og:description content="闭包定义：闭包是自包含的函数代码块，可以在代码中被传递和使用。闭包表达式语法&amp;#123; (parameters) -&amp;gt; returnType in    statements&amp;#125;Swift闭包使用{}包含，in语句前面定义好传入函数的参数个数，类型和返回值，in语句后面编写实际函数体内容。闭包使用例子let names = [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]var reverse"><meta property=og:updated_time content=2015-07-20T15:52:39.000Z><meta name=twitter:card content=summary><meta name=twitter:title content=使用Playground快速练习Swift语法--闭包和枚举><meta name=twitter:description content="闭包定义：闭包是自包含的函数代码块，可以在代码中被传递和使用。闭包表达式语法&amp;#123; (parameters) -&amp;gt; returnType in    statements&amp;#125;Swift闭包使用{}包含，in语句前面定义好传入函数的参数个数，类型和返回值，in语句后面编写实际函数体内容。闭包使用例子let names = [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]var reverse"><script type=text/javascript id=hexo.configuration>var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide',
+    motion: true
+  };</script><title>使用Playground快速练习Swift语法--闭包和枚举 | 阳春面的博客</title></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]--><script type=text/javascript>var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2315b585553e895cdb4149ce9d706f73";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();</script><div class="container one-column page-post-detail"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-meta><div class=custom-logo-site-title><a href="/" class=brand rel=start><span class=logo-line-before><i></i></span> <span class=site-title>阳春面的博客</span> <span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>分享Android/IOS/Swift开发和互联网内容</p></div><div class=site-nav-toggle><button><span class=btn-bar></span> <span class=btn-bar></span> <span class=btn-bar></span></button></div><nav class=site-nav><ul id=menu class=menu><li class="menu-item menu-item-home"><a href="/" rel=section><i class="menu-item-icon fa fa-home fa-fw"></i><br>首页</a></li><li class="menu-item menu-item-android"><a href=/android rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Android</a></li><li class="menu-item menu-item-swift"><a href=/swift rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Swift</a></li><li class="menu-item menu-item-ganhuo"><a href=/ganhuo rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>干货</a></li><li class="menu-item menu-item-archives"><a href=/archives rel=section><i class="menu-item-icon fa fa-archive fa-fw"></i><br>归档</a></li><li class="menu-item menu-item-search"><a href=http://zhannei.aswifter.com rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>搜索</a></li><li class="menu-item menu-item-about"><a href=/about rel=section><i class="menu-item-icon fa fa-user fa-fw"></i><br>关于</a></li></ul></nav></div></header><main id=main class=main><div class=main-inner><div id=content class=content><div id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline">使用Playground快速练习Swift语法--闭包和枚举</h1><div class=post-meta><span class=post-time>发表于 <time itemprop=dateCreated datetime=2015-07-20T23:45:06+08:00 content=2015-07-20>2015-07-20</time></span> <span class=post-category>&nbsp; | &nbsp; 分类于 <span itemprop=about itemscope itemtype=https://schema.org/Thing><a href="/categories/Swift/" itemprop=url rel=index><span itemprop=name>Swift</span></a></span></span> <span class=post-comments-count>&nbsp; | &nbsp; <a href=/2015/07/20/learn-swift-with-playground-closure-enum/#comments itemprop=discussionUrl><span class="post-comments-count ds-thread-count" data-thread-key="2015/07/20/learn-swift-with-playground-closure-enum/" itemprop=commentsCount></span></a></span></div></header><div class=post-body><span itemprop=articleBody><h2 id=闭包>闭包</h2><p>定义：闭包是自包含的函数代码块，可以在代码中被传递和使用。</p><h3 id=闭包表达式语法>闭包表达式语法</h3><figure class="highlight livescript"><table><tr><td class=code><pre><span class=line>&#123; <span class=function><span class=params>(parameters)</span> -&gt;</span> returnType <span class=keyword>in</span> </span><br><span class=line>   statements</span><br><span class=line>&#125;</span><br></pre></td></tr></table></figure><p>Swift闭包使用{}包含，<em>in</em>语句前面定义好传入函数的参数个数，类型和返回值，<br><em>in</em>语句后面编写实际函数体内容。</p><h3 id=闭包使用例子>闭包使用例子</h3><figure class="highlight livescript"><table><tr><td class=code><pre><span class=line><span class=keyword>let</span> names = [<span class=string>"张三"</span>, <span class=string>"李四"</span>, <span class=string>"王五"</span>]</span><br><span class=line><span class=keyword>var</span> reversed = names.sort<span class=function><span class=params>(&#123; (s1: String, s2: String) -&gt; Bool <span class=keyword>in</span></span><br><span class=line>    <span class=keyword>return</span> s1 &gt; s2</span><br><span class=line>&#125;)</span></span><br><span class=line><span class=title>print</span><span class=params>(reversed)</span></span></span><br></pre></td></tr></table></figure><a id=more></a><h3 id=闭包类型自动推断>闭包类型自动推断</h3><p>Swift中可以根据上下文自动推断闭包的参数和返回值, Swift2.0中return都可以省略。</p><figure class="highlight stylus"><table><tr><td class=code><pre><span class=line>reversed = names.<span class=function><span class=title>sort</span><span class=params>( &#123; s1, s2 in s1 &gt; s2 &#125; )</span></span></span><br><span class=line><span class=function><span class=title>print</span><span class=params>(reversed)</span></span></span><br></pre></td></tr></table></figure><p>还有更简化的，使用参数名缩写，Swift中使用$0,$1代表第一和第二个参数</p><figure class="highlight stylus"><table><tr><td class=code><pre><span class=line>reversed = names.<span class=function><span class=title>sort</span><span class=params>( &#123; $<span class=number>0</span> &gt; $<span class=number>1</span> &#125; )</span></span></span><br><span class=line><span class=function><span class=title>print</span><span class=params>(reversed)</span></span></span><br></pre></td></tr></table></figure><p>是不是已经很简化了，Swift还有更变态的，利用运算符函数</p><figure class="highlight stylus"><table><tr><td class=code><pre><span class=line>reversed = names.<span class=function><span class=title>sort</span><span class=params>(&gt;)</span></span></span><br><span class=line><span class=function><span class=title>print</span><span class=params>(reversed)</span></span></span><br></pre></td></tr></table></figure><p>String类型实现大于号（&gt;）的运算符函数，其参数和返回值就是与我们sort函数要求的一致，<br>所以可以直接传入运算符函数。</p><blockquote><p>有点类似于C++中的运算符重载</p></blockquote><h3 id=尾随闭包>尾随闭包</h3><p>为了增加代码的可读性，我们可以使用闭包的另一种写法，即尾随闭包：</p><figure class="highlight mel"><table><tr><td class=code><pre><span class=line>reversed = names.<span class=keyword>sort</span>() &#123; <span class=variable>$0</span> &gt; <span class=variable>$1</span> &#125; </span><br><span class=line><span class=keyword>print</span>(reversed)</span><br></pre></td></tr></table></figure><p>使用尾随闭包时，闭包必须是函数的最后一个参数。<br>如果函数只需要一个闭包作为参数，我们还可以省略（）</p><figure class="highlight mel"><table><tr><td class=code><pre><span class=line>reversed = names.<span class=keyword>sort</span>&#123; <span class=variable>$0</span> &gt; <span class=variable>$1</span> &#125; </span><br><span class=line><span class=keyword>print</span>(reversed)</span><br></pre></td></tr></table></figure><p>Swift官方的一个尾随闭包例子</p><figure class="highlight typescript"><table><tr><td class=code><pre><span class=line><span class=keyword>let</span> digitNames = [</span><br><span class=line>    <span class=number>0</span>: <span class=string>"Zero"</span>, <span class=number>1</span>: <span class=string>"One"</span>, <span class=number>2</span>: <span class=string>"Two"</span>,   <span class=number>3</span>: <span class=string>"Three"</span>, <span class=number>4</span>: <span class=string>"Four"</span>,</span><br><span class=line>    <span class=number>5</span>: <span class=string>"Five"</span>, <span class=number>6</span>: <span class=string>"Six"</span>, <span class=number>7</span>: <span class=string>"Seven"</span>, <span class=number>8</span>: <span class=string>"Eight"</span>, <span class=number>9</span>: <span class=string>"Nine"</span></span><br><span class=line>]</span><br><span class=line><span class=keyword>let</span> numbers = [<span class=number>16</span>, <span class=number>58</span>, <span class=number>510</span>]</span><br><span class=line></span><br><span class=line><span class=keyword>let</span> strings = numbers.map &#123;</span><br><span class=line>    (<span class=keyword>var</span> <span class=built_in>number</span>) -&gt; <span class=built_in>String</span> <span class=keyword>in</span></span><br><span class=line>    <span class=keyword>var</span> output = <span class=string>""</span></span><br><span class=line>    <span class=keyword>while</span> <span class=built_in>number</span> &gt; <span class=number>0</span> &#123;</span><br><span class=line>        output = digitNames[<span class=built_in>number</span> % <span class=number>10</span>]! + output</span><br><span class=line>        <span class=built_in>number</span> /= <span class=number>10</span></span><br><span class=line>    &#125;</span><br><span class=line>    <span class=keyword>return</span> output</span><br><span class=line>&#125;</span><br><span class=line>print(strings)</span><br></pre></td></tr></table></figure><blockquote><p>注意： 字典digitNames下标后跟着一个叹号 (!)，因为字典下标返回一个可选值 (optional value)，使用叹号 (!)会强制解析字典中的值，如果给一个不存在的下标（比如11），该语句就会出错。</p></blockquote><h2 id=枚举>枚举</h2><h3 id=枚举基本使用>枚举基本使用</h3><figure class="highlight swift"><table><tr><td class=code><pre><span class=line><span class=class><span class=keyword>enum</span> 方向 </span>&#123;</span><br><span class=line>    <span class=keyword>case</span> 东</span><br><span class=line>    <span class=keyword>case</span> 南</span><br><span class=line>    <span class=keyword>case</span> 西</span><br><span class=line>    <span class=keyword>case</span> 北</span><br><span class=line>&#125;</span><br><span class=line><span class=keyword>var</span> directionToHead = 方向.北</span><br><span class=line><span class=comment>//或</span></span><br><span class=line>directionToHead = .东</span><br></pre></td></tr></table></figure><h3 id=Switch语句使用枚举>Switch语句使用枚举</h3><figure class="highlight aspectj"><table><tr><td class=code><pre><span class=line>direction = .南</span><br><span class=line><span class=keyword>switch</span> direction &#123;</span><br><span class=line><span class=keyword>case</span> .东:</span><br><span class=line>    print(<span class=string>"龙为东方之神"</span>)</span><br><span class=line><span class=keyword>case</span> .南:</span><br><span class=line>    print(<span class=string>"朱雀为南方之神"</span>)</span><br><span class=line><span class=keyword>case</span> .西:</span><br><span class=line>    print(<span class=string>"白虎为西方之神"</span>)</span><br><span class=line><span class=keyword>case</span> .北:</span><br><span class=line>    print(<span class=string>"玄武为北方之神"</span>)</span><br><span class=line>&#125;</span><br></pre></td></tr></table></figure><blockquote><p>实际编程中尽量还是不要用中文作为枚举名吧 :)</p></blockquote><h3 id=枚举相关值>枚举相关值</h3><p>Swift中的枚举的确强大，从来没见过其他语言枚举还有设置相关值的</p><figure class="highlight kotlin"><table><tr><td class=code><pre><span class=line><span class=keyword>enum</span> Barcode &#123;</span><br><span class=line>    case UPCA(<span class=typename>Int</span>, <span class=typename>Int</span>, <span class=typename>Int</span>)</span><br><span class=line>    case QRCode(String)</span><br><span class=line>&#125;</span><br><span class=line><span class=variable><span class=keyword>var</span> productBarcode</span> = Barcode.UPCA(<span class=number>8</span>, <span class=number>85909</span>_51226, <span class=number>3</span>)</span><br><span class=line>productBarcode = .QRCode(<span class=string>"ABCDEFGHIJKLMNOP"</span>)</span><br></pre></td></tr></table></figure><p>UPCA类型需要3个Int值创建，QRCode类型需要一个String类型创建</p><h3 id=枚举默认值>枚举默认值</h3><p>枚举初始化的时候可以给每个枚举值设置一个默认值，默认值必须具有相同的类型<br>以下定义一个默认值为Character</p><figure class="highlight objectivec"><table><tr><td class=code><pre><span class=line><span class=keyword>enum</span> AS<span class=built_in>CIIControlCharacter</span>: Character &#123;</span><br><span class=line>    <span class=keyword>case</span> Tab = <span class=string>"\t"</span></span><br><span class=line>    <span class=keyword>case</span> LineFeed = <span class=string>"\n"</span></span><br><span class=line>    <span class=keyword>case</span> CarriageReturn = <span class=string>"\r"</span></span><br><span class=line>&#125;</span><br></pre></td></tr></table></figure><p>如果使用整数作为默认值时，指定第一个后，后续的会自动递增</p><figure class="highlight nix"><table><tr><td class=code><pre><span class=line>enum Planet: Int &#123;</span><br><span class=line>    case <span class=variable>Mercury =</span> <span class=number>1</span>, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune</span><br><span class=line>&#125;</span><br><span class=line><span class=keyword>let</span> <span class=variable>earthsOrder =</span> Planet.Earth.rawValue</span><br><span class=line><span class=keyword>let</span> <span class=variable>possiblePlanet =</span> Planet(rawValue: <span class=number>7</span>)</span><br></pre></td></tr></table></figure><p>使用枚举的rawValue属性获取默认值；<br>通过参数为rawValue构造函数创建特定默认值的枚举。</p><h3 id=参考资料>参考资料</h3><p><a href="http://numbbbbb.gitbooks.io/-the-swift-programming-language-/content/" target=_blank rel=external>The Swift Programming Language 中文版</a><br><a href=https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/TheBasics.html#//apple_ref/doc/uid/TP40014097-CH5-ID309 target=_blank rel=external>The Swift Programming Language 2.0 官方教程</a></p></span></div><footer class=post-footer><div class=post-tags><a href="/tags/Playground/" rel=tag>#Playground</a> <a href="/tags/Swift/" rel=tag>#Swift</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href="/2015/07/17/android-best-practices/" rel=next title="Android 开发最佳实践"><i class="fa fa-chevron-left"></i> Android 开发最佳实践</a></div><div class="post-nav-prev post-nav-item"><a href="/2015/07/21/learn-swift-with-playground-class/" rel=prev title=使用Playground快速练习Swift语法--类与面向对象>使用Playground快速练习Swift语法--类与面向对象 <i class="fa fa-chevron-right"></i></a></div></div></footer></article><div class=post-spread></div></div></div><div class=comments id=comments><div class=ds-thread data-thread-key="2015/07/20/learn-swift-with-playground-closure-enum/" data-title=使用Playground快速练习Swift语法--闭包和枚举 data-url="https://aswifter.com/2015/07/20/learn-swift-with-playground-closure-enum/"></div></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image src=/images/logo.jpg alt=阳春面 itemprop="image"><p class=site-author-name itemprop=name>阳春面</p></div><p class="site-description motion-element" itemprop=description>分享APP开发,Android开发,Swift开发,IOS开发,Nodejs开发,Web开发相关技术内容,收集Github干货,推荐优秀APP开源项目</p><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/archives><span class=site-state-item-count>70</span> <span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><span class=site-state-item-count>6</span> <span class=site-state-item-name>分类</span></div><div class="site-state-item site-state-tags"><span class=site-state-item-count>44</span> <span class=site-state-item-name>标签</span></div></nav><div class="feed-link motion-element"><a href=/atom.xml rel=alternate><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/chenyangcun target=_blank><i class="fa fa-github"></i> GitHub</a></span> <span class=links-of-author-item><a href=http://weibo.com/mykindle target=_blank><i class="fa fa-globe"></i> 微博</a></span> <span class=links-of-author-item><a href=http://www.jianshu.com/users/nqobaq target=_blank><i class="fa fa-globe"></i> 简书</a></span></div><div class="links-of-author motion-element"><p class=site-author-name>友情链接</p><span class=links-of-author-item><a href=http://www.superqq.com/,关注iOS开发和移动互联网的自媒体博客 target=_blank>刚刚在线</a></span> <span class=links-of-author-item><a href=http://www.iswifting.com target=_blank>程序员头条</a></span> <span class=links-of-author-item><a href=http://www.lxxself.com target=_blank>lxxself</a></span> <span class=links-of-author-item><a href=http://blog.csdn.net/yy1300326388 target=_blank>JavAndroid</a></span> <span class=links-of-author-item><a href="http://www.liuling123.com/" target=_blank>残剑博客</a></span></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc-indicator-top post-toc-indicator"><i class="fa fa-angle-double-up"></i></div><div class=post-toc><div class=post-toc-content><ol class=nav><li class="nav-item nav-level-2"><a class=nav-link href=#闭包><span class=nav-number>1.</span> <span class=nav-text>闭包</span></a><ol class=nav-child><li class="nav-item nav-level-3"><a class=nav-link href=#闭包表达式语法><span class=nav-number>1.1.</span> <span class=nav-text>闭包表达式语法</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#闭包使用例子><span class=nav-number>1.2.</span> <span class=nav-text>闭包使用例子</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#闭包类型自动推断><span class=nav-number>1.3.</span> <span class=nav-text>闭包类型自动推断</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#尾随闭包><span class=nav-number>1.4.</span> <span class=nav-text>尾随闭包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class=nav-link href=#枚举><span class=nav-number>2.</span> <span class=nav-text>枚举</span></a><ol class=nav-child><li class="nav-item nav-level-3"><a class=nav-link href=#枚举基本使用><span class=nav-number>2.1.</span> <span class=nav-text>枚举基本使用</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#Switch语句使用枚举><span class=nav-number>2.2.</span> <span class=nav-text>Switch语句使用枚举</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#枚举相关值><span class=nav-number>2.3.</span> <span class=nav-text>枚举相关值</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#枚举默认值><span class=nav-number>2.4.</span> <span class=nav-text>枚举默认值</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#参考资料><span class=nav-number>2.5.</span> <span class=nav-text>参考资料</span></a></li></ol></li></ol></div></div><div class="post-toc-indicator-bottom post-toc-indicator"><i class="fa fa-angle-double-down"></i></div></section></div></aside></main><footer id=footer class=footer><div class=footer-inner><div class=copyright>&copy; 2014 - <span itemprop=copyrightYear>2015</span> <span class=with-love><i class="icon-next-heart fa fa-heart"></i></span> <span class=author itemprop=copyrightHolder>阳春面</span></div><div class=powered-by>由 <a class=theme-link href=http://hexo.io>Hexo</a> 强力驱动</div><div class=theme-info>主题 - <a class=theme-link href=https://github.com/iissnan/hexo-theme-next>NexT.Mist</a></div></div></footer><div class=back-to-top></div></div><script type=text/javascript src="/vendors/jquery/index.js?v=2.1.3"></script><script type=text/javascript>var duoshuoQuery = {short_name:"ycm0513"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();</script><script type=text/javascript src=/vendors/fancybox/source/jquery.fancybox.pack.js></script><script type=text/javascript src="/js/fancy-box.js?v=0.4.5.2"></script><script type=text/javascript src="/js/helpers.js?v=0.4.5.2"></script><script type=text/javascript src=/vendors/velocity/velocity.min.js></script><script type=text/javascript src=/vendors/velocity/velocity.ui.min.js></script><script type=text/javascript src="/js/motion.js?v=0.4.5.2" id=motion.global></script><script type=text/javascript src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type=text/javascript src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type=text/javascript src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id=bootstrap.scrollspy.custom></script><script type=text/javascript id=sidebar.toc.highlight>$(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });</script><script type=text/javascript id=sidebar.nav>$(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });</script><script type=text/javascript src=/js/bootstrap.js></script></body></html>

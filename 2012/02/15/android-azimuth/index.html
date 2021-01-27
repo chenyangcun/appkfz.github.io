@@ -1,0 +1,176 @@
+<!doctype html><html class="theme-next use-motion"><head><meta charset="UTF-8"><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Cache-Control content="no-transform"><meta http-equiv=Cache-Control content="no-siteapp"><link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel=stylesheet type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel=stylesheet type=text/css><link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel=stylesheet type="text/css"><link href="/css/main.css?v=0.4.5.2" rel=stylesheet type="text/css"><meta name=keywords content="定位,"><link rel=alternate href=/atom.xml title=阳春面的博客 type="application/atom+xml"><link rel="shortcut icon" type=image/x-icon href="/images/favicon.ico?v=0.4.5.2"><meta name=description content=实现功能：根据当前位置和目的位置的经纬度，将方向指针指向目的地。如图:使用到的技术点主要有指北针，定位，方位角计算。><meta property=og:type content=article><meta property=og:title content=Android方位指向功能的实现><meta property=og:url content=https://aswifter.com/2012/02/15/android-azimuth/index.html><meta property=og:site_name content=阳春面的博客><meta property=og:description content=实现功能：根据当前位置和目的位置的经纬度，将方向指针指向目的地。如图:使用到的技术点主要有指北针，定位，方位角计算。><meta property=og:image content=http://chenyc-wordpress.stor.sinaapp.com/uploads/2012/02/device-2012-02-15-160628.png><meta property=og:updated_time content=2015-07-11T17:16:41.000Z><meta name=twitter:card content=summary><meta name=twitter:title content=Android方位指向功能的实现><meta name=twitter:description content=实现功能：根据当前位置和目的位置的经纬度，将方向指针指向目的地。如图:使用到的技术点主要有指北针，定位，方位角计算。><script type=text/javascript id=hexo.configuration>var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide',
+    motion: true
+  };</script><title>Android方位指向功能的实现 | 阳春面的博客</title></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]--><script type=text/javascript>var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2315b585553e895cdb4149ce9d706f73";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();</script><div class="container one-column page-post-detail"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-meta><div class=custom-logo-site-title><a href="/" class=brand rel=start><span class=logo-line-before><i></i></span> <span class=site-title>阳春面的博客</span> <span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>分享Android/IOS/Swift开发和互联网内容</p></div><div class=site-nav-toggle><button><span class=btn-bar></span> <span class=btn-bar></span> <span class=btn-bar></span></button></div><nav class=site-nav><ul id=menu class=menu><li class="menu-item menu-item-home"><a href="/" rel=section><i class="menu-item-icon fa fa-home fa-fw"></i><br>首页</a></li><li class="menu-item menu-item-android"><a href=/android rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Android</a></li><li class="menu-item menu-item-swift"><a href=/swift rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Swift</a></li><li class="menu-item menu-item-ganhuo"><a href=/ganhuo rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>干货</a></li><li class="menu-item menu-item-archives"><a href=/archives rel=section><i class="menu-item-icon fa fa-archive fa-fw"></i><br>归档</a></li><li class="menu-item menu-item-search"><a href=http://zhannei.aswifter.com rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>搜索</a></li><li class="menu-item menu-item-about"><a href=/about rel=section><i class="menu-item-icon fa fa-user fa-fw"></i><br>关于</a></li></ul></nav></div></header><main id=main class=main><div class=main-inner><div id=content class=content><div id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline">Android方位指向功能的实现</h1><div class=post-meta><span class=post-time>发表于 <time itemprop=dateCreated datetime=2012-02-15T17:05:45+08:00 content=2012-02-15>2012-02-15</time></span> <span class=post-category>&nbsp; | &nbsp; 分类于 <span itemprop=about itemscope itemtype=https://schema.org/Thing><a href="/categories/Android/" itemprop=url rel=index><span itemprop=name>Android</span></a></span></span> <span class=post-comments-count>&nbsp; | &nbsp; <a href=/2012/02/15/android-azimuth/#comments itemprop=discussionUrl><span class="post-comments-count ds-thread-count" data-thread-key="2012/02/15/android-azimuth/" itemprop=commentsCount></span></a></span></div></header><div class=post-body><span itemprop=articleBody><p>实现功能：<br>根据当前位置和目的位置的经纬度，将方向指针指向目的地。</p><p>如图:</p><p><a href=http://chenyc-wordpress.stor.sinaapp.com/uploads/2012/02/device-2012-02-15-160628.png target=_blank rel=external><img src=http://chenyc-wordpress.stor.sinaapp.com/uploads/2012/02/device-2012-02-15-160628.png alt="" title=device-2012-02-15-160628></a></p><p>使用到的技术点主要有指北针，定位，方位角计算。</p><a id=more></a><p><strong>1.指北针</strong></p><p>Android方向感应器取的数组中第0项即为方向（值得范围是 0 ~ 359 其中0=North, 90=East, 180=South, 270=West）</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line>mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);</span><br><span class=line>		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);</span><br><span class=line>		<span class=comment>// 注册方向感应器</span></span><br><span class=line>		mSensorManager.registerListener(mListener, mSensor,</span><br><span class=line>				SensorManager.SENSOR_DELAY_GAME);</span><br><span class=line>		<span class=comment>// 方向感应传感器监听事件，取到第0项方向值，并传递给自定义View展示</span></span><br><span class=line>		<span class=keyword>private</span> <span class=keyword>final</span> SensorEventListener mListener = <span class=keyword>new</span> SensorEventListener() &#123;</span><br><span class=line></span><br><span class=line>			<span class=annotation>@Override</span></span><br><span class=line>			<span class=function><span class=keyword>public</span> <span class=keyword>void</span> <span class=title>onSensorChanged</span><span class=params>(SensorEvent event)</span> </span>&#123;</span><br><span class=line>				mValues = event.values;</span><br><span class=line>				<span class=keyword>if</span> (mView != <span class=keyword>null</span>) &#123;</span><br><span class=line>					mView.setValues(mValues);</span><br><span class=line>					mView.invalidate();</span><br><span class=line>				&#125;</span><br><span class=line>			&#125;</span><br><span class=line></span><br><span class=line>			<span class=annotation>@Override</span></span><br><span class=line>			<span class=function><span class=keyword>public</span> <span class=keyword>void</span> <span class=title>onAccuracyChanged</span><span class=params>(Sensor sensor, <span class=keyword>int</span> accuracy)</span> </span>&#123;</span><br><span class=line>			&#125;</span><br><span class=line>		&#125;;</span><br></pre></td></tr></table></figure><p><strong>2.定位</strong></p><p>采用基站定位，速度快，缺点是必须移动网络可用</p><p>取得基站信息</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>private</span> JSONObject <span class=title>doApn</span><span class=params>()</span> <span class=keyword>throws</span> Exception </span>&#123;</span><br><span class=line>	JSONObject holder = <span class=keyword>new</span> JSONObject();</span><br><span class=line>	holder.put(<span class=string>"version"</span>, <span class=string>"1.1.0"</span>);</span><br><span class=line>	holder.put(<span class=string>"host"</span>, <span class=string>"maps.google.com"</span>);</span><br><span class=line>	holder.put(<span class=string>"address_language"</span>, <span class=string>"zh_CN"</span>);</span><br><span class=line>	holder.put(<span class=string>"request_address"</span>, <span class=keyword>true</span>);</span><br><span class=line></span><br><span class=line>	TelephonyManager tm = (TelephonyManager) context</span><br><span class=line>			.getSystemService(Context.TELEPHONY_SERVICE);</span><br><span class=line>	GsmCellLocation gcl = (GsmCellLocation) tm.getCellLocation();</span><br><span class=line>	<span class=keyword>int</span> cid = gcl.getCid();</span><br><span class=line>	<span class=keyword>int</span> lac = gcl.getLac();</span><br><span class=line>	<span class=keyword>int</span> mcc = Integer.valueOf(tm.getNetworkOperator().substring(<span class=number>0</span>, <span class=number>3</span>));</span><br><span class=line>	<span class=keyword>int</span> mnc = Integer.valueOf(tm.getNetworkOperator().substring(<span class=number>3</span>, <span class=number>5</span>));</span><br><span class=line></span><br><span class=line>	JSONArray array = <span class=keyword>new</span> JSONArray();</span><br><span class=line>	JSONObject data = <span class=keyword>new</span> JSONObject();</span><br><span class=line>	data.put(<span class=string>"cell_id"</span>, cid);</span><br><span class=line>	data.put(<span class=string>"location_area_code"</span>, lac);</span><br><span class=line>	data.put(<span class=string>"mobile_country_code"</span>, mcc);</span><br><span class=line>	data.put(<span class=string>"mobile_network_code"</span>, mnc);</span><br><span class=line>	array.put(data);</span><br><span class=line>	holder.put(<span class=string>"cell_towers"</span>, array);</span><br><span class=line></span><br><span class=line>	<span class=keyword>return</span> holder;</span><br><span class=line>&#125;</span><br></pre></td></tr></table></figure><p>提交基站信息到google的服务器，获取经纬度数据</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>public</span> HttpResponse <span class=title>execute</span><span class=params>(JSONObject params)</span> <span class=keyword>throws</span> Exception </span>&#123;</span><br><span class=line>	HttpClient httpClient = <span class=keyword>new</span> DefaultHttpClient();</span><br><span class=line>	HttpConnectionParams.setConnectionTimeout(httpClient.getParams(),</span><br><span class=line>	<span class=number>20</span> * <span class=number>1000</span>);</span><br><span class=line>	HttpConnectionParams.setSoTimeout(httpClient.getParams(), <span class=number>20</span> * <span class=number>1000</span>);</span><br><span class=line>	HttpPost post = <span class=keyword>new</span> HttpPost(<span class=string>"http://74.125.71.147/loc/json"</span>);</span><br><span class=line>	<span class=comment>// 设置代理</span></span><br><span class=line>	<span class=keyword>if</span> (postType == DO_APN) &#123;</span><br><span class=line>		<span class=comment>// 获取当前正在使用的APN接入点</span></span><br><span class=line>		Uri uri = Uri.parse(<span class=string>"content://telephony/carriers/preferapn"</span>);</span><br><span class=line>		Cursor mCursor = context.getContentResolver().query(uri, <span class=keyword>null</span>,</span><br><span class=line>		<span class=keyword>null</span>, <span class=keyword>null</span>, <span class=keyword>null</span>);</span><br><span class=line>		<span class=keyword>if</span> (mCursor != <span class=keyword>null</span>) &#123;</span><br><span class=line>		<span class=keyword>if</span>(mCursor.moveToFirst()) &#123;</span><br><span class=line>			String proxyStr = mCursor.getString(mCursor</span><br><span class=line>					.getColumnIndex(<span class=string>"proxy"</span>));</span><br><span class=line>			<span class=keyword>if</span> (proxyStr != <span class=keyword>null</span> &amp;&amp; proxyStr.trim().length() &gt; <span class=number>0</span>) &#123;</span><br><span class=line>				HttpHost proxy = <span class=keyword>new</span> HttpHost(proxyStr, <span class=number>80</span>);</span><br><span class=line>				httpClient.getParams().setParameter(</span><br><span class=line>						ConnRouteParams.DEFAULT_PROXY, proxy);</span><br><span class=line>				&#125;</span><br><span class=line>			&#125;</span><br><span class=line>		&#125;</span><br><span class=line>	&#125;</span><br><span class=line></span><br><span class=line>	StringEntity se = <span class=keyword>new</span> StringEntity(params.toString());</span><br><span class=line>	post.setEntity(se);</span><br><span class=line>	HttpResponse response = httpClient.execute(post);</span><br><span class=line>	<span class=keyword>return</span> response;</span><br><span class=line>&#125;</span><br></pre></td></tr></table></figure><p><strong>3.方位角的计算</strong></p><p>根据两点的经纬度计算方位角</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=comment>// 计算方位角,正北向为0度，以顺时针方向递增</span></span><br><span class=line><span class=function><span class=keyword>private</span> <span class=keyword>double</span> <span class=title>computeAzimuth</span><span class=params>(<span class=keyword>double</span> lat1, <span class=keyword>double</span> lon1, <span class=keyword>double</span> lat2,</span><br><span class=line>			<span class=keyword>double</span> lon2)</span> </span>&#123;</span><br><span class=line>		<span class=keyword>double</span> result = <span class=number>0.0</span>;</span><br><span class=line></span><br><span class=line>		<span class=keyword>int</span> ilat1 = (<span class=keyword>int</span>) (<span class=number>0.50</span> + lat1 * <span class=number>360000.0</span>);</span><br><span class=line>		<span class=keyword>int</span> ilat2 = (<span class=keyword>int</span>) (<span class=number>0.50</span> + lat2 * <span class=number>360000.0</span>);</span><br><span class=line>		<span class=keyword>int</span> ilon1 = (<span class=keyword>int</span>) (<span class=number>0.50</span> + lon1 * <span class=number>360000.0</span>);</span><br><span class=line>		<span class=keyword>int</span> ilon2 = (<span class=keyword>int</span>) (<span class=number>0.50</span> + lon2 * <span class=number>360000.0</span>);</span><br><span class=line></span><br><span class=line>		lat1 = Math.toRadians(lat1);</span><br><span class=line>		lon1 = Math.toRadians(lon1);</span><br><span class=line>		lat2 = Math.toRadians(lat2);</span><br><span class=line>		lon2 = Math.toRadians(lon2);</span><br><span class=line></span><br><span class=line>		<span class=keyword>if</span> ((ilat1 == ilat2) &amp;&amp; (ilon1 == ilon2)) &#123;</span><br><span class=line>			<span class=keyword>return</span> result;</span><br><span class=line>		&#125; <span class=keyword>else</span> <span class=keyword>if</span> (ilon1 == ilon2) &#123;</span><br><span class=line>			<span class=keyword>if</span> (ilat1 &gt; ilat2)</span><br><span class=line>				result = <span class=number>180.0</span>;</span><br><span class=line>		&#125; <span class=keyword>else</span> &#123;</span><br><span class=line>			<span class=keyword>double</span> c = Math</span><br><span class=line>					.acos(Math.sin(lat2) * Math.sin(lat1) + Math.cos(lat2)</span><br><span class=line>							* Math.cos(lat1) * Math.cos((lon2 - lon1)));</span><br><span class=line>			<span class=keyword>double</span> A = Math.asin(Math.cos(lat2) * Math.sin((lon2 - lon1))</span><br><span class=line>					/ Math.sin(c));</span><br><span class=line>			result = Math.toDegrees(A);</span><br><span class=line>			<span class=keyword>if</span> ((ilat2 &gt; ilat1) &amp;&amp; (ilon2 &gt; ilon1)) &#123;</span><br><span class=line>			&#125; <span class=keyword>else</span> <span class=keyword>if</span> ((ilat2 &lt; ilat1) &amp;&amp; (ilon2 &lt; ilon1)) &#123;</span><br><span class=line>				result = <span class=number>180.0</span> - result;</span><br><span class=line>			&#125; <span class=keyword>else</span> <span class=keyword>if</span> ((ilat2 &lt; ilat1) &amp;&amp; (ilon2 &gt; ilon1)) &#123;</span><br><span class=line>				result = <span class=number>180.0</span> - result;</span><br><span class=line>			&#125; <span class=keyword>else</span> <span class=keyword>if</span> ((ilat2 &gt; ilat1) &amp;&amp; (ilon2 &lt; ilon1)) &#123;</span><br><span class=line>				result += <span class=number>360.0</span>;</span><br><span class=line>			&#125;</span><br><span class=line>		&#125;</span><br><span class=line>		<span class=keyword>return</span> result;</span><br><span class=line>	&#125;</span><br></pre></td></tr></table></figure><p>方位角计算的公式参考此文：<a href=http://www.codeguru.com/Cpp/Cpp/algorithms/article.php/c5115 target=_blank rel=external>http://www.codeguru.com/Cpp/Cpp/algorithms/article.php/c5115</a></p><p><strong>4.画方向指针和旋转</strong></p><p>代码直接拷贝自API DEMO，在旋转方位做了一点修改</p><p>构建方向指针</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>public</span> <span class=title>SampleView</span><span class=params>(Context context)</span> </span>&#123;</span><br><span class=line>		<span class=keyword>super</span>(context);</span><br><span class=line>		mPath.moveTo(<span class=number>0</span>, -<span class=number>25</span>);</span><br><span class=line>		mPath.lineTo(-<span class=number>10</span>, <span class=number>30</span>);</span><br><span class=line>		mPath.lineTo(<span class=number>0</span>, <span class=number>25</span>);</span><br><span class=line>		mPath.lineTo(<span class=number>10</span>, <span class=number>30</span>);</span><br><span class=line>		mPath.close();</span><br><span class=line>	&#125;</span><br></pre></td></tr></table></figure><p>旋转canvas，并画方向指针</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>protected</span> <span class=keyword>void</span> <span class=title>onDraw</span><span class=params>(Canvas canvas)</span> </span>&#123;</span><br><span class=line>	Paint paint = mPaint;</span><br><span class=line></span><br><span class=line>	canvas.drawColor(Color.WHITE);</span><br><span class=line></span><br><span class=line>	paint.setAntiAlias(<span class=keyword>true</span>);</span><br><span class=line>	paint.setColor(Color.BLACK);</span><br><span class=line>	paint.setStyle(Paint.Style.FILL);</span><br><span class=line></span><br><span class=line>	canvas.translate(getWidth() / <span class=number>2</span>, getHeight() / <span class=number>2</span>);</span><br><span class=line>	<span class=keyword>if</span> (mValues != <span class=keyword>null</span>) &#123;</span><br><span class=line>		canvas.rotate(-mValues[<span class=number>0</span>] + (<span class=keyword>float</span>) directionAngle);</span><br><span class=line>	&#125;</span><br><span class=line>	canvas.drawPath(mPath, mPaint);</span><br><span class=line></span><br><span class=line>&#125;</span><br></pre></td></tr></table></figure><p>项目下载：<a href=http://chenyc-wordpress.stor.sinaapp.com/uploads/2012/02/north.zip target=_blank rel=external>方位指向</a></p></span></div><footer class=post-footer><div class=post-tags><a href="/tags/定位/" rel=tag>#定位</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href="/2012/01/12/android-ndk-and-jni/" rel=next title="Android NDK介绍及JNI调用"><i class="fa fa-chevron-left"></i> Android NDK介绍及JNI调用</a></div><div class="post-nav-prev post-nav-item"><a href="/2012/02/29/android-ui-theme-preload/" rel=prev title="Android UI 优化-使用theme 预加载">Android UI 优化-使用theme 预加载 <i class="fa fa-chevron-right"></i></a></div></div></footer></article><div class=post-spread></div></div></div><div class=comments id=comments><div class=ds-thread data-thread-key="2012/02/15/android-azimuth/" data-title=Android方位指向功能的实现 data-url="https://aswifter.com/2012/02/15/android-azimuth/"></div></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image src=/images/logo.jpg alt=阳春面 itemprop="image"><p class=site-author-name itemprop=name>阳春面</p></div><p class="site-description motion-element" itemprop=description>分享APP开发,Android开发,Swift开发,IOS开发,Nodejs开发,Web开发相关技术内容,收集Github干货,推荐优秀APP开源项目</p><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/archives><span class=site-state-item-count>70</span> <span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><span class=site-state-item-count>6</span> <span class=site-state-item-name>分类</span></div><div class="site-state-item site-state-tags"><span class=site-state-item-count>44</span> <span class=site-state-item-name>标签</span></div></nav><div class="feed-link motion-element"><a href=/atom.xml rel=alternate><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/chenyangcun target=_blank><i class="fa fa-github"></i> GitHub</a></span> <span class=links-of-author-item><a href=http://weibo.com/mykindle target=_blank><i class="fa fa-globe"></i> 微博</a></span> <span class=links-of-author-item><a href=http://www.jianshu.com/users/nqobaq target=_blank><i class="fa fa-globe"></i> 简书</a></span></div><div class="links-of-author motion-element"><p class=site-author-name>友情链接</p><span class=links-of-author-item><a href=http://www.superqq.com/,关注iOS开发和移动互联网的自媒体博客 target=_blank>刚刚在线</a></span> <span class=links-of-author-item><a href=http://www.iswifting.com target=_blank>程序员头条</a></span> <span class=links-of-author-item><a href=http://www.lxxself.com target=_blank>lxxself</a></span> <span class=links-of-author-item><a href=http://blog.csdn.net/yy1300326388 target=_blank>JavAndroid</a></span> <span class=links-of-author-item><a href="http://www.liuling123.com/" target=_blank>残剑博客</a></span></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc-indicator-top post-toc-indicator"><i class="fa fa-angle-double-up"></i></div><div class=post-toc><p class=post-toc-empty>此文章未包含目录</p></div><div class="post-toc-indicator-bottom post-toc-indicator"><i class="fa fa-angle-double-down"></i></div></section></div></aside></main><footer id=footer class=footer><div class=footer-inner><div class=copyright>&copy; 2014 - <span itemprop=copyrightYear>2015</span> <span class=with-love><i class="icon-next-heart fa fa-heart"></i></span> <span class=author itemprop=copyrightHolder>阳春面</span></div><div class=powered-by>由 <a class=theme-link href=http://hexo.io>Hexo</a> 强力驱动</div><div class=theme-info>主题 - <a class=theme-link href=https://github.com/iissnan/hexo-theme-next>NexT.Mist</a></div></div></footer><div class=back-to-top></div></div><script type=text/javascript src="/vendors/jquery/index.js?v=2.1.3"></script><script type=text/javascript>var duoshuoQuery = {short_name:"ycm0513"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();</script><script type=text/javascript src=/vendors/fancybox/source/jquery.fancybox.pack.js></script><script type=text/javascript src="/js/fancy-box.js?v=0.4.5.2"></script><script type=text/javascript src="/js/helpers.js?v=0.4.5.2"></script><script type=text/javascript src=/vendors/velocity/velocity.min.js></script><script type=text/javascript src=/vendors/velocity/velocity.ui.min.js></script><script type=text/javascript src="/js/motion.js?v=0.4.5.2" id=motion.global></script><script type=text/javascript src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type=text/javascript src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type=text/javascript src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id=bootstrap.scrollspy.custom></script><script type=text/javascript id=sidebar.toc.highlight>$(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });</script><script type=text/javascript id=sidebar.nav>$(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });</script><script type=text/javascript src=/js/bootstrap.js></script></body></html>

@@ -1,0 +1,176 @@
+<!doctype html><html class="theme-next use-motion"><head><meta charset="UTF-8"><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Cache-Control content="no-transform"><meta http-equiv=Cache-Control content="no-siteapp"><link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel=stylesheet type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel=stylesheet type=text/css><link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel=stylesheet type="text/css"><link href="/css/main.css?v=0.4.5.2" rel=stylesheet type="text/css"><meta name=keywords content="Android,ContentProvider,"><link rel=alternate href=/atom.xml title=阳春面的博客 type="application/atom+xml"><link rel="shortcut icon" type=image/x-icon href="/images/favicon.ico?v=0.4.5.2"><meta name=description content="刚开始看Android NotePad中的ContentProvider的实现时，看的云里雾里，但自己模仿写过一个后，才发现也就这么一回事，就是实现公用的增删改查。下面将需要实现的方法做一个简单的回顾：一个ContentProvider可以实现对多个数据表的操作，但每一个数据表都需要有一个独立URI，也必须有一个独立的类型。URI是其他应用访问这个数据入口，比如：content://com.che"><meta property=og:type content=article><meta property=og:title content=编写自己的ContentProvider><meta property=og:url content=https://aswifter.com/2010/03/27/create-contentprovider/index.html><meta property=og:site_name content=阳春面的博客><meta property=og:description content="刚开始看Android NotePad中的ContentProvider的实现时，看的云里雾里，但自己模仿写过一个后，才发现也就这么一回事，就是实现公用的增删改查。下面将需要实现的方法做一个简单的回顾：一个ContentProvider可以实现对多个数据表的操作，但每一个数据表都需要有一个独立URI，也必须有一个独立的类型。URI是其他应用访问这个数据入口，比如：content://com.che"><meta property=og:updated_time content=2015-07-11T17:44:42.000Z><meta name=twitter:card content=summary><meta name=twitter:title content=编写自己的ContentProvider><meta name=twitter:description content="刚开始看Android NotePad中的ContentProvider的实现时，看的云里雾里，但自己模仿写过一个后，才发现也就这么一回事，就是实现公用的增删改查。下面将需要实现的方法做一个简单的回顾：一个ContentProvider可以实现对多个数据表的操作，但每一个数据表都需要有一个独立URI，也必须有一个独立的类型。URI是其他应用访问这个数据入口，比如：content://com.che"><script type=text/javascript id=hexo.configuration>var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide',
+    motion: true
+  };</script><title>编写自己的ContentProvider | 阳春面的博客</title></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]--><script type=text/javascript>var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2315b585553e895cdb4149ce9d706f73";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();</script><div class="container one-column page-post-detail"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-meta><div class=custom-logo-site-title><a href="/" class=brand rel=start><span class=logo-line-before><i></i></span> <span class=site-title>阳春面的博客</span> <span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>分享Android/IOS/Swift开发和互联网内容</p></div><div class=site-nav-toggle><button><span class=btn-bar></span> <span class=btn-bar></span> <span class=btn-bar></span></button></div><nav class=site-nav><ul id=menu class=menu><li class="menu-item menu-item-home"><a href="/" rel=section><i class="menu-item-icon fa fa-home fa-fw"></i><br>首页</a></li><li class="menu-item menu-item-android"><a href=/android rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Android</a></li><li class="menu-item menu-item-swift"><a href=/swift rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Swift</a></li><li class="menu-item menu-item-ganhuo"><a href=/ganhuo rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>干货</a></li><li class="menu-item menu-item-archives"><a href=/archives rel=section><i class="menu-item-icon fa fa-archive fa-fw"></i><br>归档</a></li><li class="menu-item menu-item-search"><a href=http://zhannei.aswifter.com rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>搜索</a></li><li class="menu-item menu-item-about"><a href=/about rel=section><i class="menu-item-icon fa fa-user fa-fw"></i><br>关于</a></li></ul></nav></div></header><main id=main class=main><div class=main-inner><div id=content class=content><div id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline">编写自己的ContentProvider</h1><div class=post-meta><span class=post-time>发表于 <time itemprop=dateCreated datetime=2010-03-27T22:26:14+08:00 content=2010-03-27>2010-03-27</time></span> <span class=post-category>&nbsp; | &nbsp; 分类于 <span itemprop=about itemscope itemtype=https://schema.org/Thing><a href="/categories/Android/" itemprop=url rel=index><span itemprop=name>Android</span></a></span></span> <span class=post-comments-count>&nbsp; | &nbsp; <a href=/2010/03/27/create-contentprovider/#comments itemprop=discussionUrl><span class="post-comments-count ds-thread-count" data-thread-key="2010/03/27/create-contentprovider/" itemprop=commentsCount></span></a></span></div></header><div class=post-body><span itemprop=articleBody><p>刚开始看Android NotePad中的ContentProvider的实现时，看的云里雾里，但自己模仿写过一个后，才发现也就这么一回事，就是实现公用的增删改查。下面将需要实现的方法做一个简单的回顾：</p><ol><li>一个ContentProvider可以实现对多个数据表的操作，但每一个数据表都需要有一个独立URI，也必须有一个独立的类型。URI是其他应用访问这个数据入口，比如：<br><a href="content://" title="content://" target=_blank rel=external>content://</a>com.chenyc.timeaccount.provider/eventtypes/id<br>它包括4部分，<a href="content://" title="content://" target=_blank rel=external>content://</a>就是固定的头部，com.chenyc.timeaccount.provider部分需要一个唯一的字符串，一般就用ContentProiver类所在的包名，eventtypes部分一般是指在这个ContentProvider下，你需要操作那种类型的数据，一般可以用表名来表示，id部分是指具体操作数据的_id，如果查询某一条数据，则id部分就是其在数据库中的_id字段的值。<br>每个数据表需要有一个独立的数据类型，需要在getType(Uri uri)中实现，返回一个唯一的字符串即可，比如：<figure class="highlight java"><table><tr><td class=code><pre><span class=line>vnd.chenyc.cursor.dir/vnd.account.eventtype</span><br></pre></td></tr></table></figure></li></ol><a id=more></a><ol><li><p>query方法，查询作为最常用的方法，实现也很简单,projection参数代表要查那些列，selection是where条件部分，selectionArgs是where条件部分参数的值,sortOrder指排序，switch部分判断是查一条数据，还是查一个list,然后根据情况进行查询</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>public</span> Cursor <span class=title>query</span><span class=params>(Uri uri, String[] projection, String selection,</span><br><span class=line>			String[] selectionArgs, String sortOrder)</span> </span>&#123;</span><br><span class=line></span><br><span class=line>		SQLiteQueryBuilder qb = <span class=keyword>new</span> SQLiteQueryBuilder();</span><br><span class=line>		<span class=keyword>switch</span> (sUriMatcher.match(uri)) &#123;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPES:</span><br><span class=line>			qb.setTables(EVENT_TYPE_TABLE_NAME);</span><br><span class=line>			qb.setProjectionMap(sEventTypesProjectionMap);</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPE_ID:</span><br><span class=line>			qb.setTables(EVENT_TYPE_TABLE_NAME);</span><br><span class=line>			qb.setProjectionMap(sEventTypesProjectionMap);</span><br><span class=line>			qb.appendWhere(EventTypeAdapter.KEY_ROWID + <span class=string>"="</span></span><br><span class=line>					+ uri.getPathSegments().get(<span class=number>1</span>));</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line>		<span class=keyword>default</span>:</span><br><span class=line>			<span class=keyword>throw</span> <span class=keyword>new</span> IllegalArgumentException(<span class=string>"Unknown URI "</span> + uri);</span><br><span class=line>		&#125;</span><br><span class=line></span><br><span class=line>		SQLiteDatabase db = mDbHelper.getReadableDatabase();</span><br><span class=line>		Cursor c = qb.query(db, projection, selection, selectionArgs, <span class=keyword>null</span>,</span><br><span class=line>				<span class=keyword>null</span>, sortOrder);</span><br><span class=line>		c.setNotificationUri(getContext().getContentResolver(), uri);</span><br><span class=line>		<span class=keyword>return</span> c;</span><br><span class=line>	&#125;</span><br></pre></td></tr></table></figure></li><li><p>delete方法，处理方式也跟查询差不多，也分删一个和删一批</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>public</span> <span class=keyword>int</span> <span class=title>delete</span><span class=params>(Uri uri, String where, String[] whereArgs)</span> </span>&#123;</span><br><span class=line>		SQLiteDatabase db = mDbHelper.getWritableDatabase();</span><br><span class=line>		<span class=keyword>int</span> count;</span><br><span class=line>		<span class=keyword>switch</span> (sUriMatcher.match(uri)) &#123;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPES:</span><br><span class=line>			count = db.delete(EVENT_TYPE_TABLE_NAME, where, whereArgs);</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPE_ID:</span><br><span class=line>			String id = uri.getPathSegments().get(<span class=number>1</span>);</span><br><span class=line>			count = db.delete(EVENT_TYPE_TABLE_NAME,</span><br><span class=line>					EventTypeAdapter.KEY_ROWID</span><br><span class=line>							+ <span class=string>"="</span></span><br><span class=line>							+ id</span><br><span class=line>							+ (!TextUtils.isEmpty(where) ? <span class=string>" AND ("</span> + where</span><br><span class=line>									+ <span class=string>')'</span> : <span class=string>""</span>), whereArgs);</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line></span><br><span class=line>		<span class=keyword>default</span>:</span><br><span class=line>			<span class=keyword>throw</span> <span class=keyword>new</span> IllegalArgumentException(<span class=string>"Unknown URI "</span> + uri);</span><br><span class=line>		&#125;</span><br><span class=line></span><br><span class=line>		getContext().getContentResolver().notifyChange(uri, <span class=keyword>null</span>);</span><br><span class=line>		<span class=keyword>return</span> count;</span><br><span class=line>	&#125;</span><br></pre></td></tr></table></figure></li><li><p>insert方法，插入成功后需要返回这条记录的URI</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>public</span> Uri <span class=title>insert</span><span class=params>(Uri uri, ContentValues initialValues)</span> </span>&#123;</span><br><span class=line>		SQLiteDatabase db = mDbHelper.getWritableDatabase();</span><br><span class=line>		<span class=keyword>long</span> rowId = <span class=number>0</span>;</span><br><span class=line>		Uri contentUri;</span><br><span class=line>		<span class=keyword>switch</span> (sUriMatcher.match(uri)) &#123;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPES:</span><br><span class=line>			rowId = db.insert(EVENT_TYPE_TABLE_NAME, <span class=string>"null"</span>, initialValues);</span><br><span class=line>			contentUri = TimeAccount.EVENT_TYPE_CONTENT_URI;</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line>		<span class=keyword>default</span>:</span><br><span class=line>			<span class=keyword>throw</span> <span class=keyword>new</span> IllegalArgumentException(<span class=string>"Unknown URI "</span> + uri);</span><br><span class=line>		&#125;</span><br><span class=line></span><br><span class=line>		<span class=keyword>if</span> (rowId &gt; <span class=number>0</span>) &#123;</span><br><span class=line>			Uri returnUri = ContentUris.withAppendedId(contentUri, rowId);</span><br><span class=line>			getContext().getContentResolver().notifyChange(returnUri, <span class=keyword>null</span>);</span><br><span class=line>			<span class=keyword>return</span> returnUri;</span><br><span class=line>		&#125;</span><br><span class=line>		<span class=keyword>throw</span> <span class=keyword>new</span> SQLException(<span class=string>"Failed to insert row into "</span> + uri);</span><br><span class=line>	&#125;</span><br></pre></td></tr></table></figure></li><li><p>update方法，更新成功后需要返回修改的记录数</p><figure class="highlight java"><table><tr><td class=code><pre><span class=line><span class=function><span class=keyword>public</span> <span class=keyword>int</span> <span class=title>update</span><span class=params>(Uri uri, ContentValues values, String where,</span><br><span class=line>			String[] whereArgs)</span> </span>&#123;</span><br><span class=line></span><br><span class=line>		SQLiteDatabase db = mDbHelper.getWritableDatabase();</span><br><span class=line>		String id;</span><br><span class=line>		<span class=keyword>int</span> count;</span><br><span class=line>		<span class=keyword>switch</span> (sUriMatcher.match(uri)) &#123;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPES:</span><br><span class=line>			count = db.update(EVENT_TYPE_TABLE_NAME, values, where, whereArgs);</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line>		<span class=keyword>case</span> EVENT_TYPE_ID:</span><br><span class=line>			id = uri.getPathSegments().get(<span class=number>1</span>);</span><br><span class=line>			count = db.update(EVENT_TYPE_TABLE_NAME, values,</span><br><span class=line>					EventTypeAdapter.KEY_ROWID</span><br><span class=line>							+ <span class=string>"="</span></span><br><span class=line>							+ id</span><br><span class=line>							+ (!TextUtils.isEmpty(where) ? <span class=string>" AND ("</span> + where</span><br><span class=line>									+ <span class=string>')'</span> : <span class=string>""</span>), whereArgs);</span><br><span class=line>			<span class=keyword>break</span>;</span><br><span class=line>		<span class=keyword>default</span>:</span><br><span class=line>			<span class=keyword>throw</span> <span class=keyword>new</span> IllegalArgumentException(<span class=string>"Unknown URI "</span> + uri);</span><br><span class=line>		&#125;</span><br><span class=line>		getContext().getContentResolver().notifyChange(uri, <span class=keyword>null</span>);</span><br><span class=line>		<span class=keyword>return</span> count;</span><br><span class=line>	&#125;</span><br></pre></td></tr></table></figure></li></ol></span></div><footer class=post-footer><div class=post-tags><a href="/tags/Android/" rel=tag>#Android</a> <a href="/tags/ContentProvider/" rel=tag>#ContentProvider</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href="/2010/03/27/simplecursoradapter-cant-bind/" rel=next title=如何处理SimpleCursorAdapter不能自动转换的数据><i class="fa fa-chevron-left"></i> 如何处理SimpleCursorAdapter不能自动转换的数据</a></div><div class="post-nav-prev post-nav-item"><a href="/2011/09/04/kindlesync/" rel=prev title=Kindle摘录同步>Kindle摘录同步 <i class="fa fa-chevron-right"></i></a></div></div></footer></article><div class=post-spread></div></div></div><div class=comments id=comments><div class=ds-thread data-thread-key="2010/03/27/create-contentprovider/" data-title=编写自己的ContentProvider data-url="https://aswifter.com/2010/03/27/create-contentprovider/"></div></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image src=/images/logo.jpg alt=阳春面 itemprop="image"><p class=site-author-name itemprop=name>阳春面</p></div><p class="site-description motion-element" itemprop=description>分享APP开发,Android开发,Swift开发,IOS开发,Nodejs开发,Web开发相关技术内容,收集Github干货,推荐优秀APP开源项目</p><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/archives><span class=site-state-item-count>70</span> <span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><span class=site-state-item-count>6</span> <span class=site-state-item-name>分类</span></div><div class="site-state-item site-state-tags"><span class=site-state-item-count>44</span> <span class=site-state-item-name>标签</span></div></nav><div class="feed-link motion-element"><a href=/atom.xml rel=alternate><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/chenyangcun target=_blank><i class="fa fa-github"></i> GitHub</a></span> <span class=links-of-author-item><a href=http://weibo.com/mykindle target=_blank><i class="fa fa-globe"></i> 微博</a></span> <span class=links-of-author-item><a href=http://www.jianshu.com/users/nqobaq target=_blank><i class="fa fa-globe"></i> 简书</a></span></div><div class="links-of-author motion-element"><p class=site-author-name>友情链接</p><span class=links-of-author-item><a href=http://www.superqq.com/,关注iOS开发和移动互联网的自媒体博客 target=_blank>刚刚在线</a></span> <span class=links-of-author-item><a href=http://www.iswifting.com target=_blank>程序员头条</a></span> <span class=links-of-author-item><a href=http://www.lxxself.com target=_blank>lxxself</a></span> <span class=links-of-author-item><a href=http://blog.csdn.net/yy1300326388 target=_blank>JavAndroid</a></span> <span class=links-of-author-item><a href="http://www.liuling123.com/" target=_blank>残剑博客</a></span></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc-indicator-top post-toc-indicator"><i class="fa fa-angle-double-up"></i></div><div class=post-toc><p class=post-toc-empty>此文章未包含目录</p></div><div class="post-toc-indicator-bottom post-toc-indicator"><i class="fa fa-angle-double-down"></i></div></section></div></aside></main><footer id=footer class=footer><div class=footer-inner><div class=copyright>&copy; 2014 - <span itemprop=copyrightYear>2015</span> <span class=with-love><i class="icon-next-heart fa fa-heart"></i></span> <span class=author itemprop=copyrightHolder>阳春面</span></div><div class=powered-by>由 <a class=theme-link href=http://hexo.io>Hexo</a> 强力驱动</div><div class=theme-info>主题 - <a class=theme-link href=https://github.com/iissnan/hexo-theme-next>NexT.Mist</a></div></div></footer><div class=back-to-top></div></div><script type=text/javascript src="/vendors/jquery/index.js?v=2.1.3"></script><script type=text/javascript>var duoshuoQuery = {short_name:"ycm0513"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();</script><script type=text/javascript src=/vendors/fancybox/source/jquery.fancybox.pack.js></script><script type=text/javascript src="/js/fancy-box.js?v=0.4.5.2"></script><script type=text/javascript src="/js/helpers.js?v=0.4.5.2"></script><script type=text/javascript src=/vendors/velocity/velocity.min.js></script><script type=text/javascript src=/vendors/velocity/velocity.ui.min.js></script><script type=text/javascript src="/js/motion.js?v=0.4.5.2" id=motion.global></script><script type=text/javascript src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type=text/javascript src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type=text/javascript src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id=bootstrap.scrollspy.custom></script><script type=text/javascript id=sidebar.toc.highlight>$(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });</script><script type=text/javascript id=sidebar.nav>$(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });</script><script type=text/javascript src=/js/bootstrap.js></script></body></html>

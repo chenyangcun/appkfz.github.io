@@ -1,0 +1,176 @@
+<!doctype html><html class="theme-next use-motion"><head><meta charset="UTF-8"><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=Cache-Control content="no-transform"><meta http-equiv=Cache-Control content="no-siteapp"><link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel=stylesheet type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel=stylesheet type=text/css><link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel=stylesheet type="text/css"><link href="/css/main.css?v=0.4.5.2" rel=stylesheet type="text/css"><meta name=keywords content="Swift"><link rel=alternate href=/atom.xml title=阳春面的博客 type="application/atom+xml"><link rel="shortcut icon" type=image/x-icon href="/images/favicon.ico?v=0.4.5.2"><meta name=description content="本文介绍一个IOS APP , 将图片转换成ASCII字符画，使用Swift语言编写。举个例子，我们使用著名的蕾娜照片作为原图片经APP转换后形成的字符画，我们打印出来，效果如下："><meta property=og:type content=article><meta property=og:title content="Swift 实现图片转字符画的功能"><meta property=og:url content=https://aswifter.com/2015/06/26/creating-ascii-art-in-functional-swift/index.html><meta property=og:site_name content=阳春面的博客><meta property=og:description content="本文介绍一个IOS APP , 将图片转换成ASCII字符画，使用Swift语言编写。举个例子，我们使用著名的蕾娜照片作为原图片经APP转换后形成的字符画，我们打印出来，效果如下："><meta property=og:image content=http://7xjq5l.com1.z0.glb.clouddn.com/lenna.png><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/lenna_ascii.png?w=510&h=723"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/lenna_ascii_eyes.png?w=640"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/little_black_box.png?w=300&h=157"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/pipeline1.png?w=347&h=650"><meta property=og:image content="https://ijoshsmith.files.wordpress.com/2015/04/artist1.png?w=640&h=984"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/pixel.png?w=640&h=747"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/symbol_from_intensity.png?w=487&h=156"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/bat_noise.png?w=440&h=602"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/bat_signal.png?w=440&h=604"><meta property=og:image content="http://7xjq5l.com1.z0.glb.clouddn.com/palette.png?w=640&h=860"><meta property=og:updated_time content=2015-07-11T17:24:14.000Z><meta name=twitter:card content=summary><meta name=twitter:title content="Swift 实现图片转字符画的功能"><meta name=twitter:description content="本文介绍一个IOS APP , 将图片转换成ASCII字符画，使用Swift语言编写。举个例子，我们使用著名的蕾娜照片作为原图片经APP转换后形成的字符画，我们打印出来，效果如下："><script type=text/javascript id=hexo.configuration>var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'hide',
+    motion: true
+  };</script><title>Swift 实现图片转字符画的功能 | 阳春面的博客</title></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]--><script type=text/javascript>var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?2315b585553e895cdb4149ce9d706f73";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();</script><div class="container one-column page-post-detail"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-meta><div class=custom-logo-site-title><a href="/" class=brand rel=start><span class=logo-line-before><i></i></span> <span class=site-title>阳春面的博客</span> <span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>分享Android/IOS/Swift开发和互联网内容</p></div><div class=site-nav-toggle><button><span class=btn-bar></span> <span class=btn-bar></span> <span class=btn-bar></span></button></div><nav class=site-nav><ul id=menu class=menu><li class="menu-item menu-item-home"><a href="/" rel=section><i class="menu-item-icon fa fa-home fa-fw"></i><br>首页</a></li><li class="menu-item menu-item-android"><a href=/android rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Android</a></li><li class="menu-item menu-item-swift"><a href=/swift rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>Swift</a></li><li class="menu-item menu-item-ganhuo"><a href=/ganhuo rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>干货</a></li><li class="menu-item menu-item-archives"><a href=/archives rel=section><i class="menu-item-icon fa fa-archive fa-fw"></i><br>归档</a></li><li class="menu-item menu-item-search"><a href=http://zhannei.aswifter.com rel=section><i class="menu-item-icon fa fa-question-circle fa-fw"></i><br>搜索</a></li><li class="menu-item menu-item-about"><a href=/about rel=section><i class="menu-item-icon fa fa-user fa-fw"></i><br>关于</a></li></ul></nav></div></header><main id=main class=main><div class=main-inner><div id=content class=content><div id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline">Swift 实现图片转字符画的功能</h1><div class=post-meta><span class=post-time>发表于 <time itemprop=dateCreated datetime=2015-06-26T23:55:59+08:00 content=2015-06-26>2015-06-26</time></span> <span class=post-category>&nbsp; | &nbsp; 分类于 <span itemprop=about itemscope itemtype=https://schema.org/Thing><a href="/categories/Swift/" itemprop=url rel=index><span itemprop=name>Swift</span></a></span></span> <span class=post-comments-count>&nbsp; | &nbsp; <a href=/2015/06/26/creating-ascii-art-in-functional-swift/#comments itemprop=discussionUrl><span class="post-comments-count ds-thread-count" data-thread-key="2015/06/26/creating-ascii-art-in-functional-swift/" itemprop=commentsCount></span></a></span></div></header><div class=post-body><span itemprop=articleBody><p>本文介绍一个IOS APP , 将图片转换成ASCII字符画，使用Swift语言编写。</p><p>举个例子，我们使用著名的蕾娜照片作为原图片<br><img src=http://7xjq5l.com1.z0.glb.clouddn.com/lenna.png alt=""></p><p>经APP转换后形成的字符画，我们打印出来，效果如下：<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/lenna_ascii.png?w=510&amp;h=723" alt=""></p><a id=more></a><p>放大她的脸部可以看到图像都是字符串组成的！<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/lenna_ascii_eyes.png?w=640" alt=""></p><p>项目地址： <a href="">https://github.com/ijoshsmith/swift-ascii-art</a></p><h2 id=字符画原理>字符画原理</h2><p>图像中的每个像素都对应到一个ASCII值，在这里显示为一个<em>字符</em>。<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/little_black_box.png?w=300&amp;h=157" alt=""></p><p>图像中的每个像素都会被转换成一个中间值，如下所示：<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/pipeline1.png?w=347&amp;h=650" alt=""></p><p>让我们一步步来分析。</p><ul><li>首先，我们将一个像素颜色转换为一个灰度颜色。<br>灰度颜色的强度（比如：亮度）是介于0和1的一个值，0代表黑色，1代表白色。</li><li>接着，把每个颜色的强度值转换为ASCII字符。这对我来说，是最感兴趣的部分，<br><em>AsciiPalette</em>类实现了这部分算法，我们等一下分析。</li><li>最后，将每行的ASCII字符合并在一起，再将多行字符串合并后就形成了：字符图</li></ul><h2 id=算法实现>算法实现</h2><p><em>AsciiArtist</em>类实现了图像到字符画的转换，参考下图中的 31到 33行.<br><img src="https://ijoshsmith.files.wordpress.com/2015/04/artist1.png?w=640&amp;h=984" alt=""></p><p><em>AsciiArtist</em> 对象依赖<em>Pixel</em>和 <em>AsciiPalette</em>类, 我们等下分析。</p><h3 id=像素转换为灰度颜色>像素转换为灰度颜色</h3><p><em>Pixel</em> 类代表图像中的一个像素颜色，一个颜色有4个byte组成，<br>每个byte代表一个通道(red, green, blue, and alpha)。<br><em>AsciiArtist</em>类通过<em>Pixel</em>类确定其颜色的强度值，把像素强度值转换为一个百分数，<br>让我们看看是怎么实现的：<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/pixel.png?w=640&amp;h=747" alt=""><br>上面代码中的 47 到49行，是标准的像素灰度化转换方法，如果你关心这部分原理，可以参考<a href=http://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems target=_blank rel=external>Grayscale</a></p><h3 id=转换灰度颜色到ASCII字符>转换灰度颜色到ASCII字符</h3><p><em>AsciiArtist</em>类中的<em>symbolFromIntensity</em> 方法可以转换一个灰度颜色为一个ASCII字符,<br>我们根据转换后的强度值作为索引，在<em>AsciiPalette</em>对象的字符数组中找到对应的字符，<br>字符数组是根据颜色强度值从暗到亮排列的。<br>下面就是我们方法的实现：<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/symbol_from_intensity.png?w=487&amp;h=156" alt=symbol_from_intensity></p><p>那么问题是：我们要把哪些ASCII字符放在数组里，按什么样的顺序排列呢？</p><p>设计不良的字符数组，会输出不清晰的ASCII字符图：<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/bat_noise.png?w=440&amp;h=602" alt=""></p><p>一个良好的字符数组，会生成非常清晰的效果：<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/bat_signal.png?w=440&amp;h=604" alt=""></p><p>我的目标是设计一个好的字符数组，使电脑可以绘制出清晰的字符图。<br><em>AsciiPalette</em> 类将字符呈现为一个个图像，在白色的背景上绘制黑色的文本。<br>我们通过计算ASCII字符图像中白色像素的比率，对字符数组进行排序；白色像素越多，字符对应的强度值越大；空格字符（‘ ’）代表最高强度的值，因为它只包含白色像素，所以排在字符数组的最后。<br><img src="http://7xjq5l.com1.z0.glb.clouddn.com/palette.png?w=640&amp;h=860" alt=""></p><p><em>AsciiPalette</em> 类初始化需要一个 <em>UIFont</em> 对象作为参数， 因为选择不同的字体，字符的呈现效果不同，这会影响字符周围有多少白色像素。</p><p>源码地址： <a href="">https://github.com/ijoshsmith/swift-ascii-art</a></p><p>本文译自：<a href="http://ijoshsmith.com/2015/04/29/creating-ascii-art-in-functional-swift/" target=_blank rel=external>Creating ASCII art in functional Swift</a></p></span></div><footer class=post-footer><div class=post-tags><a href="/tags/Swift/" rel=tag>#Swift</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href="/2015/06/24/Material-Design-Example-1/" rel=next title="Material Design控件使用（一）"><i class="fa fa-chevron-left"></i> Material Design控件使用（一）</a></div><div class="post-nav-prev post-nav-item"><a href="/2015/06/27/Material-Design-Example-2/" rel=prev title="Material Design控件使用（二）">Material Design控件使用（二） <i class="fa fa-chevron-right"></i></a></div></div></footer></article><div class=post-spread></div></div></div><div class=comments id=comments><div class=ds-thread data-thread-key="2015/06/26/creating-ascii-art-in-functional-swift/" data-title="Swift 实现图片转字符画的功能" data-url="https://aswifter.com/2015/06/26/creating-ascii-art-in-functional-swift/"></div></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image src=/images/logo.jpg alt=阳春面 itemprop="image"><p class=site-author-name itemprop=name>阳春面</p></div><p class="site-description motion-element" itemprop=description>分享APP开发,Android开发,Swift开发,IOS开发,Nodejs开发,Web开发相关技术内容,收集Github干货,推荐优秀APP开源项目</p><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/archives><span class=site-state-item-count>70</span> <span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><span class=site-state-item-count>6</span> <span class=site-state-item-name>分类</span></div><div class="site-state-item site-state-tags"><span class=site-state-item-count>44</span> <span class=site-state-item-name>标签</span></div></nav><div class="feed-link motion-element"><a href=/atom.xml rel=alternate><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/chenyangcun target=_blank><i class="fa fa-github"></i> GitHub</a></span> <span class=links-of-author-item><a href=http://weibo.com/mykindle target=_blank><i class="fa fa-globe"></i> 微博</a></span> <span class=links-of-author-item><a href=http://www.jianshu.com/users/nqobaq target=_blank><i class="fa fa-globe"></i> 简书</a></span></div><div class="links-of-author motion-element"><p class=site-author-name>友情链接</p><span class=links-of-author-item><a href=http://www.superqq.com/,关注iOS开发和移动互联网的自媒体博客 target=_blank>刚刚在线</a></span> <span class=links-of-author-item><a href=http://www.iswifting.com target=_blank>程序员头条</a></span> <span class=links-of-author-item><a href=http://www.lxxself.com target=_blank>lxxself</a></span> <span class=links-of-author-item><a href=http://blog.csdn.net/yy1300326388 target=_blank>JavAndroid</a></span> <span class=links-of-author-item><a href="http://www.liuling123.com/" target=_blank>残剑博客</a></span></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc-indicator-top post-toc-indicator"><i class="fa fa-angle-double-up"></i></div><div class=post-toc><div class=post-toc-content><ol class=nav><li class="nav-item nav-level-2"><a class=nav-link href=#字符画原理><span class=nav-number>1.</span> <span class=nav-text>字符画原理</span></a></li><li class="nav-item nav-level-2"><a class=nav-link href=#算法实现><span class=nav-number>2.</span> <span class=nav-text>算法实现</span></a><ol class=nav-child><li class="nav-item nav-level-3"><a class=nav-link href=#像素转换为灰度颜色><span class=nav-number>2.1.</span> <span class=nav-text>像素转换为灰度颜色</span></a></li><li class="nav-item nav-level-3"><a class=nav-link href=#转换灰度颜色到ASCII字符><span class=nav-number>2.2.</span> <span class=nav-text>转换灰度颜色到ASCII字符</span></a></li></ol></li></ol></div></div><div class="post-toc-indicator-bottom post-toc-indicator"><i class="fa fa-angle-double-down"></i></div></section></div></aside></main><footer id=footer class=footer><div class=footer-inner><div class=copyright>&copy; 2014 - <span itemprop=copyrightYear>2015</span> <span class=with-love><i class="icon-next-heart fa fa-heart"></i></span> <span class=author itemprop=copyrightHolder>阳春面</span></div><div class=powered-by>由 <a class=theme-link href=http://hexo.io>Hexo</a> 强力驱动</div><div class=theme-info>主题 - <a class=theme-link href=https://github.com/iissnan/hexo-theme-next>NexT.Mist</a></div></div></footer><div class=back-to-top></div></div><script type=text/javascript src="/vendors/jquery/index.js?v=2.1.3"></script><script type=text/javascript>var duoshuoQuery = {short_name:"ycm0513"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();</script><script type=text/javascript src=/vendors/fancybox/source/jquery.fancybox.pack.js></script><script type=text/javascript src="/js/fancy-box.js?v=0.4.5.2"></script><script type=text/javascript src="/js/helpers.js?v=0.4.5.2"></script><script type=text/javascript src=/vendors/velocity/velocity.min.js></script><script type=text/javascript src=/vendors/velocity/velocity.ui.min.js></script><script type=text/javascript src="/js/motion.js?v=0.4.5.2" id=motion.global></script><script type=text/javascript src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type=text/javascript src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type=text/javascript src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id=bootstrap.scrollspy.custom></script><script type=text/javascript id=sidebar.toc.highlight>$(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });</script><script type=text/javascript id=sidebar.nav>$(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });</script><script type=text/javascript src=/js/bootstrap.js></script></body></html>
